@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from models.book import Book
-
+from schemas import BookCreate, BookRead, BookUpdate
 
 def list_Books(db: Session):
     """
@@ -13,3 +13,20 @@ def list_Books(db: Session):
         List of Book objects.
     """
     return db.query(Book).all()
+
+def create_book(db: Session, book_data:BookCreate):
+    """
+    Create a new book in the database.
+
+    Args:
+        db: Database session.
+        book_data: Data for the new book (should be a BookCreate schema).
+
+    Returns:
+        The created Book object.
+    """
+    new_book = Book(**book_data)
+    db.add(new_book)
+    db.commit()
+    db.refresh(new_book)
+    return new_book
