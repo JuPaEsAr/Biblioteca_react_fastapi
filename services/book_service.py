@@ -25,7 +25,11 @@ def create_book(db: Session, book_data:BookCreate):
     Returns:
         The created Book object.
     """
-    new_book = Book(**book_data)
+    new_book = Book(
+        title=book_data.title,
+        author=book_data.author,
+        rating=book_data.rating
+    )
     db.add(new_book)
     db.commit()
     db.refresh(new_book)
