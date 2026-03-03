@@ -1,5 +1,8 @@
 from fastapi import FastAPI
 
+from api.books import router as books_router
+
+
 # Crear instancia principal de la aplicación FastAPI.
 # 'app' será utilizada por Uvicorn para levantar el servidor.
 app = FastAPI(
@@ -16,3 +19,5 @@ def root():
     """
     return {"mensaje": "API Biblioteca funcionando correctamente"}
 
+# Include the books router to handle all book-related endpoints under the /api/libros prefix.
+app.include_router(books_router)
