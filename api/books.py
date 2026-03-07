@@ -3,7 +3,7 @@ from typing import List
 from sqlalchemy.orm import Session
 
 from database import get_db
-from services.book_service import list_Books, create_book, get_book_by_id
+from services.book_service import list_Books, create_book, get_book_by_id, update_book
 from schemas import BookRead, BookCreate, BookUpdate
 
 # Create a router for book-related endpoints
@@ -42,3 +42,16 @@ def get_book_by_id_endpoint(book_id: int = Path(...,gt=0,description="ID of the 
     if not book:
         raise HTTPException(status_code=404, detail="Book not found")
     return book
+
+@router.put("/{book_id}", response_model=BookRead, status_code=200)
+def update_book_endpoint(book_id: int = Path(...,gt=0,description="ID of the book to update"), book_data: BookUpdate = None, db: Session = Depends(get_db)):
+    """
+    Endpoint that updates an existing book in the database. 
+    It accepts a `BookUpdate` model as input, which contains the updated data for the book. 
+    The endpoint uses the `update_book` function from the `book_service` to perform the update. 
+    If the book is found and updated successfully, it returns the updated book as a `BookRead` model; otherwise, it raises a 404 HTTP exception.
+    """
+    updated_book = update_book(db, book_id, book_data)
+    if not updated_book:
+        raise HTTPException(status_code=404, detail="Book not found")
+    return updated_book
