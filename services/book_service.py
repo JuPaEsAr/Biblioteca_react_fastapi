@@ -34,3 +34,16 @@ def create_book(db: Session, book_data:BookCreate):
     db.commit()
     db.refresh(new_book)
     return new_book
+
+def get_book_by_id(db: Session, book_id: int):
+    """
+    Retrieve a book by its ID.
+
+    Args:
+        db: Database session.
+        book_id: ID of the book to retrieve.
+
+    Returns:
+        The Book object if found, otherwise None.
+    """
+    return db.query(Book).filter(Book.id == book_id).first()
