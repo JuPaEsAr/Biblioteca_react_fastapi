@@ -3,7 +3,7 @@ from typing import List
 from sqlalchemy.orm import Session
 
 from database import get_db
-from services.book_service import list_Books, create_book, get_book_by_id, update_book
+from services.book_service import list_Books, create_book, get_book_by_id, update_book, delete_book
 from schemas import BookRead, BookCreate, BookUpdate
 
 # Create a router for book-related endpoints
@@ -55,3 +55,15 @@ def update_book_endpoint(book_id: int = Path(...,gt=0,description="ID of the boo
     if not updated_book:
         raise HTTPException(status_code=404, detail="Book not found")
     return updated_book
+
+@router.delete("/{book_id}", status_code=204)
+def delete_book_endpoint(book_id: int = Path(...,gt=0,description="ID of the book to delete"), db: Session = Depends(get_db)):
+    """
+    Endpoint that deletes a book from the database. 
+    It uses the `delete_book` function from the `book_service` to perform the deletion. 
+    If the book is found and deleted successfully, it returns a success message; otherwise, it raises a 404 HTTP exception.
+    """
+    deleted = delete_book(db, book_id)
+    if not deleted:
+        raise HTTPException(status_code=404, detail="Book not found")
+    return {"detail": "Book deleted successfully"}
