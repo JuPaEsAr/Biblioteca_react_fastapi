@@ -64,11 +64,16 @@ def update_book(db: Session, book_id: int, book_data: BookUpdate):
     if not book:
         return None
     
-    book.title = book_data.title
-    book.author = book_data.author
-    book.rating = book_data.rating
+    if book_data.title is not None:
+        book.title = book_data.title
+    
+    if book_data.author is not None:
+        book.author = book_data.author
+
+    if book_data.rating is not None:
+        book.rating = book_data.rating
 
     db.commit()
     db.refresh(book)
-    
+
     return book
