@@ -77,3 +77,22 @@ def update_book(db: Session, book_id: int, book_data: BookUpdate):
     db.refresh(book)
 
     return book
+
+def delete_book(db: Session, book_id: int):
+    """
+    Delete a book from the database.
+
+    Args:
+        db: Database session.
+        book_id: ID of the book to delete.
+
+    Returns:
+        True if the book was deleted, False otherwise.
+    """
+    book = get_book_by_id(db, book_id)
+    if not book:
+        return False
+
+    db.delete(book)
+    db.commit()
+    return True
