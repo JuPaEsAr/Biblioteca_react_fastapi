@@ -47,3 +47,28 @@ def get_book_by_id(db: Session, book_id: int):
         The Book object if found, otherwise None.
     """
     return db.query(Book).filter(Book.id == book_id).first()
+
+def update_book(db: Session, book_id: int, book_data: BookUpdate):
+    """
+    Update an existing book in the database.
+
+    Args:
+        db: Database session.
+        book_id: ID of the book to update.
+        book_data: Updated data for the book (should be a BookUpdate schema).
+
+    Returns:
+        The updated Book object if found and updated, otherwise None.
+    """
+    book = get_book_by_id(db, book_id)
+    if not book:
+        return None
+    
+    book.title = book_data.title
+    book.author = book_data.author
+    book.rating = book_data.rating
+
+    db.commit()
+    db.refresh(book)
+    
+    return book
