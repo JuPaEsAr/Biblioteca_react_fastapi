@@ -2,16 +2,32 @@ from fastapi import FastAPI
 
 from api.books import router as books_router
 
+from fastapi.middleware.cors import CORSMiddleware
 
-# Crear instancia principal de la aplicación FastAPI.
-# 'app' será utilizada por Uvicorn para levantar el servidor.
+
+# Create the FastAPI application instance.
+# 'app' This will be the main entry point for the API.
 app = FastAPI(
     title="API Personal Library",
     description="Backend REST with FastAPI for managing books.",
     version="1.0.0"
 )
 
-# Endpoint de prueba (ruta raíz).
+origins = [
+    "http://localhost:4200",
+    "http://localhost:5173"
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"]
+)
+
+# Endpoint to confirm that the API is running. 
+# It returns a simple JSON message indicating that the library API is functioning correctly.
 @app.get("/")
 def root():
     """
