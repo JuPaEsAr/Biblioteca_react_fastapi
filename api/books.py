@@ -1,9 +1,9 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Path
 from typing import List
 from sqlalchemy.orm import Session
 
 from database import get_db
-from services.book_service import list_Books, create_book
+from services.book_service import list_Books, create_book, get_book_by_id
 from schemas import BookRead, BookCreate, BookUpdate
 
 # Create a router for book-related endpoints
@@ -30,3 +30,15 @@ def create_book_endpoint(book_data: BookCreate, db: Session = Depends(get_db)):
     """
     new_book = create_book(db, book_data)
     return new_book
+
+@router.get("/{book_id}", response_model=BookRead)
+def get_book_by_id_endpoint(book_id: int = Path(...,gt=0,description="ID of the book to fetch"), db: Session = Depends(get_db)):
+    """
+    Endpoint that retrieves a book by its ID. 
+    It uses the `get_book_by_id` function from the `book_service` to fetch the book. 
+    If the book is found, it returns it as a `BookRead` model; otherwise, it raises a 404 HTTP exception.
+    """
+    book = get_book_by_id(db, book_id)
+    if not book:
+        raise HTTPException(status_code=404, detail="Book not found")
+    return book
